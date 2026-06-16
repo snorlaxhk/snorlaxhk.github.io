@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Titan Chemistry Portal</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f7f8fb;
+      color: #222;
+    }
+
+    header {
+      background: linear-gradient(135deg, #4b2fa3, #7b5cff);
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 42px;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      font-size: 18px;
+      margin-top: 12px;
+      opacity: 0.9;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    section {
+      margin-bottom: 50px;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      border-left: 6px solid #7b5cff;
+      padding-left: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      font-size: 21px;
+    }
+
+    .card p {
+      color: #555;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .card a {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 10px 18px;
+      background: #4b6ef5;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .card a:hover {
+      background: #3455d1;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #777;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>🧪 Titan Chemistry Portal</h1>
+    <p>Learn • Practice • Explore Chemistry</p>
+  </header>
+
+  <main>
+
+    <section>
+      <h2>📚 Learning Resources</h2>
+
+      <div class="grid">
+        <div class="card">
+          <h3>DIY Videos</h3>
+          <p>Chemistry experiment and learning videos.</p>
+          <a href="#">Open</a>
+        </div>
+
+        <div class="card">
+          <h3>DSE Resources</h3>
+          <p>DSE Chemistry notes, revision materials and useful links.</p>
+          <a href="#">Open</a>
+        </div>
+
+        <div class="card">
+          <h3>IFY Papers</h3>
+          <p>Practice materials for IFY Chemistry students.</p>
+          <a href="#">Open</a>
+        </div>
+
+        <div class="card">
+          <h3>Textbook Answers</h3>
+          <p>Selected textbook answer resources.</p>
+          <a href="#">Open</a>
+        </div>
+
+        <div class="card">
+          <h3>Books</h3>
+          <p>Self-made chemistry books and learning materials.</p>
+          <a href="#">Open</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>🧪 Interactive Tools</h2>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Molecule Shape Explorer</h3>
+          <p>View 3D molecular models and predict molecular shapes.</p>
+          <a href="https://snorlaxhk.github.io/moleculeshape/">Open Tool</a>
+        </div>
+
+        <div class="card">
+          <h3>MC Practice</h3>
+          <p>Topic-based multiple choice chemistry practice.</p>
+          <a href="https://snorlaxhk.github.io/mc-game/">Open Tool</a>
+        </div>
+
+        <div class="card">
+          <h3>Mole Calculator</h3>
+          <p>Calculate mole, mass, gas volume and concentration.</p>
+          <a href="#">Coming Soon</a>
+        </div>
+
+        <div class="card">
+          <h3>Hess Law Solver</h3>
+          <p>Step-by-step enthalpy change calculation tool.</p>
+          <a href="#">Coming Soon</a>
+        </div>
+
+        <div class="card">
+          <h3>Electrolysis Predictor</h3>
+          <p>Predict cathode and anode products in electrolysis.</p>
+          <a href="#">Coming Soon</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>👨‍🏫 About Titan</h2>
+
+      <div class="card">
+        <h3>About This Site</h3>
+        <p>
+          This website collects chemistry learning resources and interactive tools
+          for students. More tools will be added gradually.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    © 2026 Titan Chemistry Portal
+  </footer>
+
+</body>
+</html>
