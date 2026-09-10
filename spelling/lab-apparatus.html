@@ -44,6 +44,8 @@
       flex-direction: column;
       align-items: center;
       position: relative;
+      overflow: hidden;
+      min-height: 560px;
     }
 
     /* Header & Stats */
@@ -213,7 +215,7 @@
       border-color: var(--primary);
     }
 
-    button {
+    button.main-btn {
       background: var(--primary);
       color: white;
       border: none;
@@ -226,41 +228,89 @@
       transition: transform 0.1s, background 0.2s;
     }
 
-    button:active {
+    button.main-btn:active {
       transform: scale(0.97);
     }
 
     .btn-next {
       background: var(--success);
+      color: white;
+      border: none;
+      font-size: 1.15rem;
+      font-weight: 600;
+      padding: 14px 24px;
+      border-radius: 14px;
+      cursor: pointer;
       box-shadow: 0 4px 12px rgba(46, 196, 182, 0.3);
       width: 100%;
       margin-top: 6px;
       display: none;
     }
 
-    /* End Screen Modal */
-    .end-modal {
-      display: none;
+    /* Modal Overlays (Cover Page & End Screen) */
+    .overlay-screen {
       position: absolute;
       inset: 0;
-      background: rgba(255, 255, 255, 0.96);
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       border-radius: 24px;
+      display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       padding: 30px;
       text-align: center;
-      z-index: 10;
+      z-index: 20;
     }
 
-    .end-modal h2 {
+    .overlay-screen h1 {
       font-size: 2.2rem;
-      margin-bottom: 12px;
       color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .rules-card {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px 20px;
+      max-width: 440px;
+      text-align: left;
+      margin: 18px 0 24px;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #334155;
+    }
+
+    .rules-card ul {
+      margin: 6px 0 0 18px;
+      padding: 0;
+    }
+
+    .rules-card li {
+      margin-bottom: 4px;
+    }
+
+    .ready-btn {
+      background: linear-gradient(135deg, #4361ee, #3a0ca3);
+      color: white;
+      border: none;
+      font-size: 1.3rem;
+      font-weight: 700;
+      padding: 16px 40px;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(67, 97, 238, 0.35);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .ready-btn:active {
+      transform: scale(0.96);
     }
 
     .final-score {
-      font-size: 3rem;
+      font-size: 3.2rem;
       font-weight: 800;
       color: var(--primary);
       margin-bottom: 20px;
@@ -270,6 +320,24 @@
 <body>
 
 <div class="game-container">
+  <!-- 1. COVER PAGE OVERLAY -->
+  <div class="overlay-screen" id="coverScreen">
+    <h1>🧪 Lab Apparatus Quiz</h1>
+    <p style="color: #64748b; font-size: 1.1rem; margin: 0;">Test your scientific spelling skills!</p>
+    
+    <div class="rules-card">
+      <strong>How to Play:</strong>
+      <ul>
+        <li>⏱️ <strong>30 seconds</strong> per apparatus.</li>
+        <li>🎯 <strong>1st try correct:</strong> 10 marks.</li>
+        <li>🔄 <strong>2nd try correct:</strong> 5 marks.</li>
+        <li>⏸️ <strong>Pause button:</strong> stops the clock, but caps max score at 5 marks.</li>
+      </ul>
+    </div>
+
+    <button class="ready-btn" id="readyBtn">Ready? Start Quiz! 🚀</button>
+  </div>
+
   <!-- Top Stats -->
   <div class="top-bar">
     <div class="badge" id="qCount">Question 1 / 12</div>
@@ -294,22 +362,22 @@
   </div>
 
   <div class="prompt-text">What is this lab apparatus called?</div>
-  <div class="status-msg" id="statusMsg">Type the English name below:</div>
+  <div class="status-msg" id="statusMsg">Type your answer below:</div>
 
   <!-- Input Field & Submit -->
   <form class="input-form" id="gameForm" onsubmit="return false;">
-    <input type="text" id="answerInput" placeholder="e.g. beaker" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-    <button id="submitBtn" type="button">Submit</button>
+    <input type="text" id="answerInput" placeholder="Type your answer here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    <button id="submitBtn" class="main-btn" type="button">Submit</button>
   </form>
 
   <button class="btn-next" id="nextBtn">Next Apparatus ➔</button>
 
-  <!-- Game Over Screen -->
-  <div class="end-modal" id="endModal">
-    <h2>🎉 Quiz Completed!</h2>
-    <p style="font-size: 1.2rem; color: #64748b;">Your Total Marks:</p>
+  <!-- 2. GAME OVER SCREEN OVERLAY -->
+  <div class="overlay-screen" id="endModal" style="display: none;">
+    <h1>🎉 Quiz Completed!</h1>
+    <p style="font-size: 1.2rem; color: #64748b; margin-bottom: 4px;">Your Total Marks:</p>
     <div class="final-score" id="finalScoreVal">0 / 120</div>
-    <button id="restartBtn">Play Again</button>
+    <button class="ready-btn" id="restartBtn">Play Again 🔄</button>
   </div>
 </div>
 
@@ -466,6 +534,8 @@
   let hasUsedPauseForQuestion = false;
 
   // DOM Elements
+  const coverScreen = document.getElementById('coverScreen');
+  const readyBtn = document.getElementById('readyBtn');
   const artFrame = document.getElementById('artFrame');
   const answerInput = document.getElementById('answerInput');
   const submitBtn = document.getElementById('submitBtn');
@@ -505,7 +575,6 @@
 
     const q = QUESTIONS[index];
 
-    // Reset interface elements
     qCount.textContent = `Question ${index + 1} / ${QUESTIONS.length}`;
     artFrame.innerHTML = SVG_ART[q.key] + '<div class="pause-notice">PAUSED</div>';
     artFrame.classList.remove('is-paused');
@@ -520,9 +589,8 @@
     submitBtn.style.display = 'block';
     nextBtn.style.display = 'none';
     statusMsg.className = 'status-msg';
-    statusMsg.textContent = 'Type the English spelling below:';
+    statusMsg.textContent = 'Type the correct spelling below:';
 
-    // Start countdown
     timeLeft = 30;
     updateTimerUI();
     startTimer();
@@ -546,7 +614,6 @@
 
   function togglePause() {
     if (isPaused) {
-      // Resume
       isPaused = false;
       pauseBtn.textContent = '⏸️ Pause';
       pauseBtn.classList.remove('active');
@@ -556,7 +623,6 @@
       answerInput.focus();
       startTimer();
     } else {
-      // Pause
       isPaused = true;
       hasUsedPauseForQuestion = true;
       clearInterval(timerInterval);
@@ -585,7 +651,7 @@
 
       if (hasUsedPauseForQuestion) {
         awarded = 5;
-        statusMsg.textContent = `👍 Correct! (Pause used: +5 Marks)`;
+        statusMsg.textContent = `👍 Correct! (Pause penalty: +5 Marks)`;
       } else if (attempts === 0) {
         awarded = 10;
         statusMsg.textContent = `✨ Excellent! Correct on 1st try! (+10 Marks)`;
@@ -606,7 +672,7 @@
         answerInput.focus();
       } else {
         clearInterval(timerInterval);
-        statusMsg.textContent = `❌ Incorrect again. The correct name is "${q.name}". (0 Marks)`;
+        statusMsg.textContent = `❌ Incorrect. The correct answer is "${q.name}". (0 Marks)`;
         statusMsg.className = 'status-msg danger';
         finishQuestion();
       }
@@ -634,13 +700,22 @@
     }
   }
 
-  function resetGame() {
+  function resetToCover() {
     clearInterval(timerInterval);
     currentIdx = 0;
     totalScore = 0;
     isPaused = false;
     scoreText.textContent = 'Marks: 0';
     endModal.style.display = 'none';
+    coverScreen.style.display = 'flex';
+  }
+
+  function startGame() {
+    coverScreen.style.display = 'none';
+    endModal.style.display = 'none';
+    currentIdx = 0;
+    totalScore = 0;
+    scoreText.textContent = 'Marks: 0';
     loadQuestion(0);
   }
 
@@ -650,7 +725,10 @@
   }
 
   // Event Listeners
+  readyBtn.addEventListener('click', startGame);
+  restartBtn.addEventListener('click', startGame);
   submitBtn.addEventListener('click', handleCheck);
+
   answerInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -659,17 +737,12 @@
   });
 
   pauseBtn.addEventListener('click', togglePause);
-  resetBtn.addEventListener('click', resetGame);
+  resetBtn.addEventListener('click', resetToCover);
 
   nextBtn.addEventListener('click', () => {
     currentIdx++;
     loadQuestion(currentIdx);
   });
-
-  restartBtn.addEventListener('click', resetGame);
-
-  // Initialize Quiz
-  loadQuestion(0);
 </script>
 </body>
 </html>
