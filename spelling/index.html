@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spelling Games Portal</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      margin: 0;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card h3 {
+      margin-top: 0;
+      font-size: 1.25rem;
+    }
+    .card p {
+      color: #64748b;
+      font-size: 0.95rem;
+      flex-grow: 1;
+    }
+    .btn {
+      display: inline-block;
+      text-align: center;
+      background: #2563eb;
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      margin-top: 1rem;
+    }
+    .btn:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../" class="back-link">← Back to Main Portal</a>
+    <header>
+      <h1>🔤 Spelling Games</h1>
+      <p>Select a game below to practice your chemistry vocabulary.</p>
+    </header>
+
+    <div class="grid">
+      <!-- Game 1 -->
+      <div class="card">
+        <div>
+          <h3>Lab Apparatus</h3>
+          <p>Practice spelling essential laboratory equipment and glassware.</p>
+        </div>
+        <a href="lab-apparatus.html" class="btn">Play Game</a>
+      </div>
+
+      <!-- Placeholder for Game 2 -->
+      <div class="card">
+        <div>
+          <h3>Elements & Compounds</h3>
+          <p>Test your spelling of common elements, acids, and salts.</p>
+        </div>
+        <a href="#" class="btn" style="background: #94a3b8; pointer-events: none;">Coming Soon</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
