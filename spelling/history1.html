@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>S1 History Vocabulary Spelling Game</title>
+  <style>
+    :root {
+      --primary: #8b5cf6;
+      --primary-dark: #6d28d9;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      padding: 16px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f5f3ff, #ede9fe, #f8fafc);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang HK", "Microsoft JhengHei", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text);
+    }
+
+    .game-card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 680px;
+      border-radius: 28px;
+      box-shadow: 0 20px 45px rgba(109, 40, 217, 0.1);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 560px;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .badge {
+      background: #f1f5f9;
+      padding: 8px 16px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #475569;
+    }
+
+    .score-badge {
+      color: var(--primary-dark);
+      background: #f5f3ff;
+    }
+
+    /* Focus Area: Chinese Meaning + Part of Speech + Audio */
+    .word-display-box {
+      width: 100%;
+      background: #fcfaff;
+      border: 2px dashed #ddd6fe;
+      border-radius: 24px;
+      padding: 32px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .pos-pill {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      background: #ede9fe;
+      padding: 4px 14px;
+      border-radius: 20px;
+    }
+
+    .chinese-hint {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: #31104b;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+
+    .btn-audio {
+      background: #ede9fe;
+      color: var(--primary-dark);
+      border: none;
+      font-size: 1.15rem;
+      font-weight: 700;
+      padding: 12px 26px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(109, 40, 217, 0.15);
+      transition: all 0.15s ease;
+      margin-top: 4px;
+    }
+
+    .btn-audio:active {
+      transform: scale(0.96);
+      background: #ddd6fe;
+    }
+
+    /* Status Message */
+    .status-msg {
+      min-height: 32px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .status-msg.danger { color: var(--danger); }
+    .status-msg.success { color: var(--success); }
+    .status-msg.warning { color: var(--warning); }
+
+    /* Input Form - Strict anti-autocomplete styling */
+    .input-form {
+      width: 100%;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      font-size: 1.35rem;
+      padding: 16px 20px;
+      border: 2px solid #cbd5e1;
+      border-radius: 16px;
+      outline: none;
+      text-align: center;
+      letter-spacing: 0.5px;
+      transition: border-color 0.2s;
+      background: #ffffff;
+      /* Disables virtual keyboard predictive styling where supported */
+      -webkit-ime-mode: disabled;
+      ime-mode: disabled;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+
+    button.btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-size: 1.15rem;
+      font-weight: 700;
+      padding: 16px 28px;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+      transition: transform 0.1s ease;
+    }
+
+    button.btn-primary:active {
+      transform: scale(0.97);
+    }
+
+    .btn-next {
+      background: var(--success);
+      color: white;
+      border: none;
+      font-size: 1.15rem;
+      font-weight: 700;
+      padding: 15px 24px;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
+      width: 100%;
+      display: none;
+    }
+
+    /* Modal Overlays: Cover & Breakdown Screen */
+    .overlay-screen {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 20px;
+      text-align: center;
+      z-index: 20;
+    }
+
+    .overlay-screen h1 {
+      font-size: 2.1rem;
+      color: var(--primary-dark);
+      margin-bottom: 6px;
+    }
+
+    .rules-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 18px 22px;
+      max-width: 480px;
+      text-align: left;
+      margin: 18px 0 24px;
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: #334155;
+    }
+
+    .rules-card ul {
+      margin: 6px 0 0 20px;
+    }
+
+    .btn-ready {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: white;
+      border: none;
+      font-size: 1.35rem;
+      font-weight: 700;
+      padding: 16px 46px;
+      border-radius: 18px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(109, 40, 217, 0.35);
+    }
+
+    .btn-ready:active {
+      transform: scale(0.96);
+    }
+
+    .score-banner {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin: 4px 0 10px;
+    }
+
+    /* Breakdown List at the end */
+    .results-container {
+      width: 100%;
+      flex: 1;
+      max-height: 330px;
+      overflow-y: auto;
+      margin: 8px 0 18px;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      background: #f8fafc;
+      padding: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .result-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: #ffffff;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      border-left: 5px solid #cbd5e1;
+    }
+
+    .result-card.card-correct-10 { border-left-color: var(--success); }
+    .result-card.card-correct-5 { border-left-color: var(--warning); }
+    .result-card.card-failed { border-left-color: var(--danger); }
+
+    .result-details {
+      text-align: left;
+      font-size: 1.05rem;
+      line-height: 1.4;
+    }
+
+    .word-badge-correct {
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .meaning-sub {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-left: 6px;
+    }
+
+    .user-given-answer {
+      font-size: 0.88rem;
+      margin-top: 3px;
+    }
+
+    .result-status-tag {
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .tag-10 { background: #dcfce7; color: #15803d; }
+    .tag-5 { background: #fef3c7; color: #b45309; }
+    .tag-0 { background: #fee2e2; color: #b91c1c; }
+
+    .action-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-mini-audio {
+      background: #ede9fe;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-card">
+  <!-- 1. COVER / READY SCREEN -->
+  <div class="overlay-screen" id="coverScreen">
+    <h1>🏛️ S1 History Vocabulary</h1>
+    <p style="color: #64748b; font-size: 1.1rem; margin-top: 4px;">Human Needs: Past and Present</p>
+
+    <div class="rules-card">
+      <strong>Quiz Rules:</strong>
+      <ul>
+        <li>⏳ <strong>Unlimited time:</strong> think carefully before typing.</li>
+        <li>🚫 <strong>關聯字 (Predictive text) disabled:</strong> test your true spelling memory!</li>
+        <li>🔊 Tap <strong>"Pronunciation"</strong> to hear the word or phrase read out.</li>
+        <li>🎯 <strong>1st try correct:</strong> +10 marks.</li>
+        <li>🔄 <strong>2nd try correct:</strong> +5 marks.</li>
+        <li>❌ <strong>2 incorrect tries:</strong> 0 marks (moves to next).</li>
+        <li>📋 <strong>Complete results breakdown</strong> shown at the end!</li>
+      </ul>
+    </div>
+
+    <button class="btn-ready" id="readyBtn">Ready? Start Game! 🚀</button>
+  </div>
+
+  <!-- Top Info Bar -->
+  <div class="top-bar">
+    <div class="badge" id="qCount">Word 1 / 14</div>
+    <div class="badge score-badge" id="scoreText">Marks: 0</div>
+  </div>
+
+  <!-- Focus Box: Chinese + Part of Speech + Audio -->
+  <div class="word-display-box">
+    <span class="pos-pill" id="posTag">noun</span>
+    <div class="chinese-hint" id="chineseHint">歷史</div>
+    <button class="btn-audio" id="speakBtn" type="button">🔊 Pronunciation</button>
+  </div>
+
+  <div class="status-msg" id="statusMsg">Listen to the word and type the English spelling:</div>
+
+  <!-- Input Form: Configured to strictly stop predictive text & suggestions -->
+  <form class="input-form" id="gameForm" onsubmit="return false;" autocomplete="off">
+    <input 
+      type="text" 
+      id="answerInput" 
+      placeholder="Type English spelling..."
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="none"
+      spellcheck="false"
+      data-form-type="other"
+      data-lpignore="true"
+      role="presentation"
+    />
+    <button id="submitBtn" class="btn-primary" type="button">Submit</button>
+  </form>
+
+  <button class="btn-next" id="nextBtn">Next Term ➔</button>
+
+  <!-- 2. SUMMARY & BREAKDOWN OVERLAY -->
+  <div class="overlay-screen" id="endModal" style="display: none;">
+    <h2>🎉 Quiz Completed!</h2>
+    <div class="score-banner" id="finalScoreVal">0 / 140</div>
+
+    <div style="width: 100%; display: flex; justify-content: space-between; align-items: baseline;">
+      <span style="font-weight: 700; color: #475569; font-size: 1.05rem;">Questions Breakdown:</span>
+      <span id="summaryCounter" style="font-size: 0.9rem; color: #64748b;">14 Questions</span>
+    </div>
+
+    <div class="results-container" id="resultsList"></div>
+
+    <button class="btn-ready" id="restartBtn">Play Again 🔄</button>
+  </div>
+</div>
+
+<script>
+  // All 14 terms from the S1 History worksheet[cite: 8]
+  const VOCAB_DATA = [
+    { word: "History", pos: "noun", meaning: "歷史", valid: ["history"] },
+    { word: "Homo sapiens", pos: "noun", meaning: "智人", valid: ["homo sapiens"] },
+    { word: "Prehistoric Times", pos: "noun", meaning: "史前時期", valid: ["prehistoric times"] },
+    { word: "Historic Times", pos: "noun", meaning: "信史時期", valid: ["historic times"] },
+    { word: "Millennia", pos: "noun", meaning: "千禧年", valid: ["millennia", "millennium"] },
+    { word: "Centuries", pos: "noun", meaning: "世紀", valid: ["centuries", "century"] },
+    { word: "Decades", pos: "noun", meaning: "年代", valid: ["decades", "decade"] },
+    { word: "Stone Age", pos: "noun", meaning: "石器時代", valid: ["stone age"] },
+    { word: "Food Gathering", pos: "noun phrase", meaning: "採集糧食", valid: ["food gathering"] },
+    { word: "Nomadic Lifestyle", pos: "noun phrase", meaning: "遷徙生活", valid: ["nomadic lifestyle"] },
+    { word: "Survival Skills", pos: "noun phrase", meaning: "生存智慧", valid: ["survival skills"] },
+    { word: "Hunting", pos: "verb", meaning: "狩獵", valid: ["hunting"] },
+    { word: "Self-defense", pos: "noun", meaning: "自衛", valid: ["self-defense", "self defense", "self-defence", "self defence"] },
+    { word: "fire", pos: "noun", meaning: "火", valid: ["fire"] }
+  ];
+
+  let currentPool = [];
+  let currentIdx = 0;
+  let attempts = 0;
+  let totalScore = 0;
+  let roundResults = [];
+
+  // DOM Elements
+  const coverScreen = document.getElementById('coverScreen');
+  const readyBtn = document.getElementById('readyBtn');
+  const qCount = document.getElementById('qCount');
+  const scoreText = document.getElementById('scoreText');
+  const posTag = document.getElementById('posTag');
+  const chineseHint = document.getElementById('chineseHint');
+  const speakBtn = document.getElementById('speakBtn');
+  const statusMsg = document.getElementById('statusMsg');
+  const answerInput = document.getElementById('answerInput');
+  const submitBtn = document.getElementById('submitBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const endModal = document.getElementById('endModal');
+  const finalScoreVal = document.getElementById('finalScoreVal');
+  const resultsList = document.getElementById('resultsList');
+  const summaryCounter = document.getElementById('summaryCounter');
+  const restartBtn = document.getElementById('restartBtn');
+
+  // Text-To-Speech for iPad & Android
+  function playPronunciation(text) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  function normalize(str) {
+    return str.toLowerCase().trim().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
+  }
+
+  function startNewGame() {
+    // Shuffles all 14 words each round
+    currentPool = [...VOCAB_DATA].sort(() => 0.5 - Math.random());
+    currentIdx = 0;
+    totalScore = 0;
+    roundResults = [];
+    scoreText.textContent = `Marks: 0`;
+
+    coverScreen.style.display = 'none';
+    endModal.style.display = 'none';
+    loadQuestion(0);
+  }
+
+  function loadQuestion(index) {
+    attempts = 0;
+    const item = currentPool[index];
+
+    qCount.textContent = `Word ${index + 1} / ${currentPool.length}`;
+    posTag.textContent = item.pos;
+    chineseHint.textContent = item.meaning;
+
+    answerInput.value = '';
+    answerInput.disabled = false;
+    submitBtn.disabled = false;
+    submitBtn.style.display = 'block';
+    nextBtn.style.display = 'none';
+
+    statusMsg.className = 'status-msg';
+    statusMsg.textContent = 'Listen to the word and type the English spelling:';
+
+    speakBtn.onclick = () => playPronunciation(item.word);
+
+    // Auto-pronounce when loading each question
+    playPronunciation(item.word);
+
+    setTimeout(() => answerInput.focus(), 150);
+  }
+
+  function handleCheck() {
+    const rawVal = answerInput.value.trim();
+    const userVal = normalize(rawVal);
+    if (!userVal) return;
+
+    const currentItem = currentPool[currentIdx];
+    const isCorrect = currentItem.valid.some(v => normalize(v) === userVal);
+
+    if (isCorrect) {
+      if (attempts === 0) {
+        totalScore += 10;
+        statusMsg.textContent = `✨ Fantastic! Correct on 1st try! (+10 Marks)`;
+        roundResults.push({
+          word: currentItem.word,
+          meaning: currentItem.meaning,
+          status: 'correct-1',
+          marks: 10,
+          userInput: rawVal
+        });
+      } else {
+        totalScore += 5;
+        statusMsg.textContent = `👍 Well done! Correct on 2nd try! (+5 Marks)`;
+        roundResults.push({
+          word: currentItem.word,
+          meaning: currentItem.meaning,
+          status: 'correct-2',
+          marks: 5,
+          userInput: rawVal
+        });
+      }
+      statusMsg.className = 'status-msg success';
+      scoreText.textContent = `Marks: ${totalScore}`;
+      finishQuestion();
+    } else {
+      attempts++;
+      if (attempts === 1) {
+        statusMsg.textContent = '❌ Incorrect! You have 1 more trial (+5 Marks).';
+        statusMsg.className = 'status-msg warning';
+        answerInput.value = '';
+        answerInput.focus();
+      } else {
+        roundResults.push({
+          word: currentItem.word,
+          meaning: currentItem.meaning,
+          status: 'failed',
+          marks: 0,
+          userInput: rawVal
+        });
+        statusMsg.textContent = `❌ Incorrect. The correct spelling is "${currentItem.word}". (0 Marks)`;
+        statusMsg.className = 'status-msg danger';
+        finishQuestion();
+      }
+    }
+  }
+
+  function finishQuestion() {
+    answerInput.disabled = true;
+    submitBtn.style.display = 'none';
+
+    if (currentIdx < currentPool.length - 1) {
+      nextBtn.style.display = 'block';
+      nextBtn.focus();
+    } else {
+      setTimeout(showGameOver, 1300);
+    }
+  }
+
+  function showGameOver() {
+    finalScoreVal.textContent = `${totalScore} / ${currentPool.length * 10}`;
+
+    const correctCount = roundResults.filter(r => r.marks > 0).length;
+    summaryCounter.textContent = `${correctCount} Correct / ${roundResults.length - correctCount} Incorrect`;
+
+    resultsList.innerHTML = '';
+    roundResults.forEach((res, i) => {
+      const card = document.createElement('div');
+      
+      let borderClass = 'card-failed';
+      let tagHtml = '<span class="result-status-tag tag-0">0 Marks (Incorrect)</span>';
+      let answerDetail = `<div class="user-given-answer" style="color: var(--danger);">Your answer: "${res.userInput}" ➔ Correct: <strong>${res.word}</strong></div>`;
+
+      if (res.status === 'correct-1') {
+        borderClass = 'card-correct-10';
+        tagHtml = '<span class="result-status-tag tag-10">+10 Marks (1st Try)</span>';
+        answerDetail = `<div class="user-given-answer" style="color: #15803d;">Correctly spelled!</div>`;
+      } else if (res.status === 'correct-2') {
+        borderClass = 'card-correct-5';
+        tagHtml = '<span class="result-status-tag tag-5">+5 Marks (2nd Try)</span>';
+        answerDetail = `<div class="user-given-answer" style="color: #b45309;">Correct on 2nd trial!</div>`;
+      }
+
+      card.className = `result-card ${borderClass}`;
+      card.innerHTML = `
+        <div class="result-details">
+          <div>
+            <span style="font-weight:700; color:#64748b;">#${i + 1}</span>
+            <span class="word-badge-correct">${res.word}</span>
+            <span class="meaning-sub">(${res.meaning})</span>
+          </div>
+          ${answerDetail}
+        </div>
+        <div class="action-group">
+          ${tagHtml}
+          <button class="btn-mini-audio" title="Listen" onclick="playPronunciation('${res.word}')">🔊</button>
+        </div>
+      `;
+      resultsList.appendChild(card);
+    });
+
+    endModal.style.display = 'flex';
+  }
+
+  // Event Listeners
+  readyBtn.addEventListener('click', startNewGame);
+  restartBtn.addEventListener('click', startNewGame);
+  submitBtn.addEventListener('click', handleCheck);
+
+  answerInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleCheck();
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    currentIdx++;
+    loadQuestion(currentIdx);
+  });
+</script>
+</body>
+</html>
